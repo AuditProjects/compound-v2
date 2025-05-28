@@ -86,6 +86,7 @@ abstract contract BaseJumpRateModelV2 is InterestRateModel {
         return borrows * BASE / (cash + borrows - reserves);
     }
 
+
     /**
      * @notice Calculates the current borrow rate per block, with the error code expected by the market
      * @param cash The amount of cash in the market
@@ -93,12 +94,16 @@ abstract contract BaseJumpRateModelV2 is InterestRateModel {
      * @param reserves The amount of reserves in the market
      * @return The borrow rate percentage per block as a mantissa (scaled by BASE)
      */
+    // 拐点型：计算借款利率
     function getBorrowRateInternal(uint cash, uint borrows, uint reserves) internal view returns (uint) {
+        // 计算资金利用率
         uint util = utilizationRate(cash, borrows, reserves);
 
         if (util <= kink) {
+            // 资金使用率没超过拐点：借款利率 y = x * k + b
             return ((util * multiplierPerBlock) / BASE) + baseRatePerBlock;
         } else {
+            // 资金使用率超过拐点：
             uint normalRate = ((kink * multiplierPerBlock) / BASE) + baseRatePerBlock;
             uint excessUtil = util - kink;
             return ((excessUtil * jumpMultiplierPerBlock) / BASE) + normalRate;
@@ -113,6 +118,8 @@ abstract contract BaseJumpRateModelV2 is InterestRateModel {
      * @param reserveFactorMantissa The current reserve factor for the market
      * @return The supply rate percentage per block as a mantissa (scaled by BASE)
      */
+    // 计算存款利率
+    // 存款利率 = 资金使用率 * 借款利率 *（1 - 储备金率）
     function getSupplyRate(uint cash, uint borrows, uint reserves, uint reserveFactorMantissa) virtual override public view returns (uint) {
         uint oneMinusReserveFactor = BASE - reserveFactorMantissa;
         uint borrowRate = getBorrowRateInternal(cash, borrows, reserves);

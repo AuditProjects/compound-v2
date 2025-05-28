@@ -158,11 +158,14 @@ contract CErc20 is CToken, CErc20Interface {
      *      Note: This wrapper safely handles non-standard ERC-20 tokens that do not return a value.
      *            See here: https://medium.com/coinmonks/missing-return-value-bug-at-least-130-tokens-affected-d67bf08521ca
      */
+    // 
     function doTransferIn(address from, uint amount) virtual override internal returns (uint) {
         // Read from storage once
         address underlying_ = underlying;
+        // 标的资产
         EIP20NonStandardInterface token = EIP20NonStandardInterface(underlying_);
         uint balanceBefore = EIP20Interface(underlying_).balanceOf(address(this));
+        // 将资产转给合约
         token.transferFrom(from, address(this), amount);
 
         bool success;
@@ -183,6 +186,7 @@ contract CErc20 is CToken, CErc20Interface {
 
         // Calculate the amount that was *actually* transferred
         uint balanceAfter = EIP20Interface(underlying_).balanceOf(address(this));
+        // 返回真实转入的 资产数量
         return balanceAfter - balanceBefore;   // underflow already checked above, just subtract
     }
 

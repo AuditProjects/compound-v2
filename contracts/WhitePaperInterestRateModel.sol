@@ -30,9 +30,12 @@ contract WhitePaperInterestRateModel is InterestRateModel {
 
     /**
      * @notice Construct an interest rate model
-     * @param baseRatePerYear The approximate target base APR, as a mantissa (scaled by BASE)
+     * @param baseRatePerYear The approximate target base APR, as a mantissa (scaled by BASE) 
      * @param multiplierPerYear The rate of increase in interest rate wrt utilization (scaled by BASE)
      */
+    // baseRatePerYear 基准年利率
+    // multiplierPerYear
+    //  
     constructor(uint baseRatePerYear, uint multiplierPerYear) public {
         baseRatePerBlock = baseRatePerYear / blocksPerYear;
         multiplierPerBlock = multiplierPerYear / blocksPerYear;
@@ -63,6 +66,7 @@ contract WhitePaperInterestRateModel is InterestRateModel {
      * @param reserves The amount of reserves in the market
      * @return The borrow rate percentage per block as a mantissa (scaled by BASE)
      */
+    // 直线型:计算借款利率
     function getBorrowRate(uint cash, uint borrows, uint reserves) override public view returns (uint) {
         uint ur = utilizationRate(cash, borrows, reserves);
         return (ur * multiplierPerBlock / BASE) + baseRatePerBlock;
@@ -76,6 +80,7 @@ contract WhitePaperInterestRateModel is InterestRateModel {
      * @param reserveFactorMantissa The current reserve factor for the market
      * @return The supply rate percentage per block as a mantissa (scaled by BASE)
      */
+    // 计算存款利率
     function getSupplyRate(uint cash, uint borrows, uint reserves, uint reserveFactorMantissa) override public view returns (uint) {
         uint oneMinusReserveFactor = BASE - reserveFactorMantissa;
         uint borrowRate = getBorrowRate(cash, borrows, reserves);

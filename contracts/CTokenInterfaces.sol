@@ -6,6 +6,7 @@ import "./InterestRateModel.sol";
 import "./EIP20NonStandardInterface.sol";
 import "./ErrorReporter.sol";
 
+// 存储变量
 contract CTokenStorage {
     /**
      * @dev Guard variable for re-entrancy checks

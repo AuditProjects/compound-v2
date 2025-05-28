@@ -51,6 +51,7 @@ contract ComptrollerV1Storage is UnitrollerAdminStorage {
     /**
      * @notice Per-account mapping of "assets you are in", capped by maxAssets
      */
+    // 用户的抵押品列表存储
     mapping(address => CToken[]) public accountAssets;
 
 }
