@@ -70,6 +70,10 @@ contract CTokenStorage {
     /**
      * @notice Accumulator of the total earned interest rate since the opening of the market
      */
+    // 每单位本金经过利息累计后的增长倍数
+    // 全局变量，用于计算利息
+    // currentAmount = principal × (borrowIndex / interestIndex)
+    // 因为 borrowIndex 增长，而 interestIndex 是借出时记录的，比例的扩大即是利息
     uint public borrowIndex;
 
     /**
